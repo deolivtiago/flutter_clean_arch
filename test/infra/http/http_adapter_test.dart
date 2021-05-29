@@ -11,7 +11,7 @@ class HttpAdapter {
 
   HttpAdapter(this.client);
 
-  Future<void> request({
+  Future<Map> request({
     @required String url,
     @required String method,
     Map body,
@@ -21,12 +21,13 @@ class HttpAdapter {
       'accept': 'application/json'
     };
     final jsonBody = body != null ? jsonEncode(body) : null;
+    final response = await client.post(url, headers: headers, body: jsonBody);
 
-    client.post(
-      url,
-      headers: headers,
-      body: jsonBody,
-    );
+    if (response.statusCode == 200) {
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    } else {
+      return null;
+    }
   }
 }
 
@@ -44,6 +45,18 @@ void main() {
   });
 
   group('post', () {
+    PostExpectation mockRequest() => when(
+        client.post(any, body: anyNamed('body'), headers: anyNamed('headers')));
+
+    void mockResponse(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
+      mockRequest().thenAnswer((_) async => Response(body, statusCode));
+    }
+
+    setUp(() {
+      mockResponse(200);
+    });
+
     test('Should call post request with correct data', () async {
       await sut.request(
         url: url,
@@ -71,6 +84,27 @@ void main() {
         any,
         headers: anyNamed('headers'),
       ));
+    });
+
+    test('Should return data if post request returns 200', () async {
+      final response = await sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      expect(response, {'any_key': 'any_value'});
+    });
+
+    test('Should return null if post request returns 200 with no data',
+        () async {
+      mockResponse(200, body: '');
+
+      final response = await sut.request(
+        url: url,
+        method: 'post',
+      );
+
+      expect(response, null);
     });
   });
 }
