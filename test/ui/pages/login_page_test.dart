@@ -12,18 +12,26 @@ class LoginPresenterSpy extends Mock implements LoginPresenter {}
 void main() {
   LoginPresenter presenter;
   StreamController<String> emailErrorController;
+  StreamController<String> passwordErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
+
     emailErrorController = StreamController<String>();
     when(presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
+
+    passwordErrorController = StreamController<String>();
+    when(presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordErrorController.stream);
+
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
 
   tearDown(() {
     emailErrorController.close();
+    passwordErrorController.close();
   });
 
   testWidgets('Should load with correct inicial state',
@@ -82,7 +90,7 @@ void main() {
     emailErrorController.add(null);
     await tester.pump();
 
-    var emailTextChildren = find.descendant(
+    final emailTextChildren = find.descendant(
       of: find.bySemanticsLabel('Email'),
       matching: find.byType(Text),
     );
@@ -103,5 +111,16 @@ void main() {
     );
 
     expect(emailTextChildren, findsOneWidget);
+  });
+
+  testWidgets('Should present error if password is invalid',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+    final error = 'any_error';
+
+    passwordErrorController.add(error);
+    await tester.pump();
+
+    expect(find.text(error), findsOneWidget);
   });
 }
