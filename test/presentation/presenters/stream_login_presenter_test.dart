@@ -117,4 +117,19 @@ void main() {
     sut.validateEmail(email);
     sut.validatePassword(password);
   });
+
+  test('Should emit email error if validation fails', () async {
+    sut.emailErrorStream.listen(
+      expectAsync1((event) => expect(event, null)),
+    );
+    sut.passwordErrorStream.listen(
+      expectAsync1((event) => expect(event, null)),
+    );
+
+    expectLater(sut.isFormValidStream, emitsInOrder([false, true]));
+
+    sut.validateEmail(email);
+    await Future.delayed(Duration.zero);
+    sut.validatePassword(password);
+  });
 }
