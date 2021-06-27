@@ -42,8 +42,11 @@ void main() {
     final error = 'error';
     mockValidation(value: error);
 
-    expectLater(sut.emailErrorStream, emits(error));
+    sut.emailErrorStream.listen(
+      expectAsync1((event) => expect(event, error)),
+    );
 
+    sut.validateEmail(email);
     sut.validateEmail(email);
   });
 }
