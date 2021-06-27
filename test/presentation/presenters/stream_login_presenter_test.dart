@@ -99,4 +99,22 @@ void main() {
     sut.validatePassword(password);
     sut.validatePassword(password);
   });
+
+  test('Should emit email error if validation fails', () {
+    final error = 'error';
+    mockValidation(field: 'email', value: error);
+
+    sut.emailErrorStream.listen(
+      expectAsync1((event) => expect(event, error)),
+    );
+    sut.passwordErrorStream.listen(
+      expectAsync1((event) => expect(event, null)),
+    );
+    sut.isFormValidStream.listen(
+      expectAsync1((event) => expect(event, false)),
+    );
+
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+  });
 }
