@@ -52,4 +52,16 @@ void main() {
     sut.validateEmail(email);
     sut.validateEmail(email);
   });
+
+  test('Should emit null if validation succeeds', () {
+    sut.emailErrorStream.listen(
+      expectAsync1((event) => expect(event, null)),
+    );
+    sut.isFormValidStream.listen(
+      expectAsync1((event) => expect(event, false)),
+    );
+
+    sut.validateEmail(email);
+    sut.validateEmail(email);
+  });
 }
