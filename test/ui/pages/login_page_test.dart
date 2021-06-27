@@ -15,6 +15,7 @@ void main() {
   StreamController<String> passwordErrorController;
   StreamController<bool> isFormValidController;
   StreamController<bool> isLoadingController;
+  StreamController<String> mainErrorController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
@@ -35,6 +36,10 @@ void main() {
     when(presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
 
+    mainErrorController = StreamController<String>();
+    when(presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
+
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
@@ -44,6 +49,7 @@ void main() {
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
   });
 
   testWidgets('Should load with correct inicial state',
@@ -222,5 +228,16 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('Should present error message if authentication failed',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+    final error = 'main_error';
+
+    mainErrorController.add(error);
+    await tester.pump();
+
+    expect(find.text(error), findsOneWidget);
   });
 }
