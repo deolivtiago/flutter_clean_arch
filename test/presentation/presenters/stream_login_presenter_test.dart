@@ -14,7 +14,9 @@ class StreamLoginPresenter {
 
   StreamLoginPresenter({@required this.validation});
 
-  void validateEmail(String email) {}
+  void validateEmail(String email) {
+    validation.validate(field: 'email', value: email);
+  }
 }
 
 void main() {
