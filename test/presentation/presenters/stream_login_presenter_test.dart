@@ -1,45 +1,25 @@
-import 'dart:async';
-
 import 'package:faker/faker.dart';
-import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-abstract class Validation {
-  String validate({@required String field, @required String value});
-}
+import 'package:flutter_clean_arch/presentation/presenters/presenters.dart';
+import 'package:flutter_clean_arch/presentation/protocols/protocols.dart';
 
 class ValidationSpy extends Mock implements Validation {}
-
-class LoginState {
-  String emailError;
-}
-
-class StreamLoginPresenter {
-  final Validation validation;
-  final _controller = StreamController<LoginState>.broadcast();
-  var _state = LoginState();
-
-  StreamLoginPresenter({@required this.validation});
-
-  Stream<String> get emailErrorStream =>
-      _controller.stream.map((state) => state.emailError);
-
-  void validateEmail(String email) {
-    _state.emailError = validation.validate(field: 'email', value: email);
-    _controller.add(_state);
-  }
-}
 
 void main() {
   StreamLoginPresenter sut;
   Validation validation;
   String email;
 
-  PostExpectation mockValidationCall(String field) => when(validation.validate(
+  PostExpectation mockValidationCall(String field) {
+    return when(
+      validation.validate(
         field: field == null ? anyNamed('field') : field,
         value: anyNamed('value'),
-      ));
+      ),
+    );
+  }
 
   void mockValidation({String field, String value}) {
     mockValidationCall(field).thenReturn(value);
