@@ -18,6 +18,7 @@ class LoginState {
 class StreamLoginPresenter {
   final Validation validation;
   final _controller = StreamController<LoginState>.broadcast();
+  var _state = LoginState();
 
   StreamLoginPresenter({@required this.validation});
 
@@ -25,7 +26,8 @@ class StreamLoginPresenter {
       _controller.stream.map((state) => state.emailError);
 
   void validateEmail(String email) {
-    validation.validate(field: 'email', value: email);
+    _state.emailError = validation.validate(field: 'email', value: email);
+    _controller.add(_state);
   }
 }
 
