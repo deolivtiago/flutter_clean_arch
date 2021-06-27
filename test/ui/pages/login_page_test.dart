@@ -17,39 +17,45 @@ void main() {
   StreamController<bool> isLoadingController;
   StreamController<String> mainErrorController;
 
-  Future<void> loadPage(WidgetTester tester) async {
-    presenter = LoginPresenterSpy();
-
+  void initStreams() {
     emailErrorController = StreamController<String>();
-    when(presenter.emailErrorStream)
-        .thenAnswer((_) => emailErrorController.stream);
-
     passwordErrorController = StreamController<String>();
-    when(presenter.passwordErrorStream)
-        .thenAnswer((_) => passwordErrorController.stream);
-
     isFormValidController = StreamController<bool>();
-    when(presenter.isFormValidStream)
-        .thenAnswer((_) => isFormValidController.stream);
-
     isLoadingController = StreamController<bool>();
-    when(presenter.isLoadingStream)
-        .thenAnswer((_) => isLoadingController.stream);
-
     mainErrorController = StreamController<String>();
-    when(presenter.mainErrorStream)
-        .thenAnswer((_) => mainErrorController.stream);
-
-    final loginPage = MaterialApp(home: LoginPage(presenter));
-    await tester.pumpWidget(loginPage);
   }
 
-  tearDown(() {
+  void mockStreams() {
+    when(presenter.emailErrorStream)
+        .thenAnswer((_) => emailErrorController.stream);
+    when(presenter.passwordErrorStream)
+        .thenAnswer((_) => passwordErrorController.stream);
+    when(presenter.isFormValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
+    when(presenter.isLoadingStream)
+        .thenAnswer((_) => isLoadingController.stream);
+    when(presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
+  }
+
+  void closeStreams() {
     emailErrorController.close();
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
     mainErrorController.close();
+  }
+
+  Future<void> loadPage(WidgetTester tester) async {
+    presenter = LoginPresenterSpy();
+    initStreams();
+    mockStreams();
+    final loginPage = MaterialApp(home: LoginPage(presenter));
+    await tester.pumpWidget(loginPage);
+  }
+
+  tearDown(() {
+    closeStreams();
   });
 
   testWidgets('Should load with correct inicial state',
