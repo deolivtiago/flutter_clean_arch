@@ -45,6 +45,9 @@ void main() {
     sut.emailErrorStream.listen(
       expectAsync1((event) => expect(event, error)),
     );
+    sut.isFormValidStream.listen(
+      expectAsync1((event) => expect(event, false)),
+    );
 
     sut.validateEmail(email);
     sut.validateEmail(email);
