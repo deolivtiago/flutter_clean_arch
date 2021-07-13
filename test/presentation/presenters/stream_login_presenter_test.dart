@@ -215,4 +215,10 @@ void main() {
 
     await sut.auth();
   });
+
+  test('Should not emit events after dispose', () async {
+    expectLater(sut.emailErrorStream, neverEmits(null));
+    sut.dispose();
+    sut.validateEmail(email);
+  });
 }
