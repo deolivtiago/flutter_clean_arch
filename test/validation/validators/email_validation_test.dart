@@ -1,25 +1,13 @@
 import 'package:test/test.dart';
 
 import 'package:flutter_clean_arch/validation/protocols/protocols.dart';
-
-class EmailValidation implements FieldValidation {
-  final String field;
-
-  EmailValidation(this.field);
-
-  String validate(String value) {
-    final regex = RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    final isValid = value?.isNotEmpty != true || regex.hasMatch(value);
-    return isValid ? null : 'Campo Inválido.';
-  }
-}
+import 'package:flutter_clean_arch/validation/validators/validators.dart';
 
 void main() {
   FieldValidation sut;
 
   setUp(() {
-    sut = EmailValidation('any_field');
+    sut = EmailValidation(field: 'any_field');
   });
 
   test('Should return null if email is empty', () {
