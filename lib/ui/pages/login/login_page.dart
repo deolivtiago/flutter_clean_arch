@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:meta/meta.dart';
 
 import '../../components/components.dart';
 
@@ -9,7 +10,7 @@ import './components/components.dart';
 class LoginPage extends StatefulWidget {
   final LoginPresenter presenter;
 
-  const LoginPage(this.presenter);
+  const LoginPage({@required this.presenter});
 
   @override
   _LoginPageState createState() => _LoginPageState();

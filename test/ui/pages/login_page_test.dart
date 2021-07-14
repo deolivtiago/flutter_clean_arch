@@ -50,7 +50,7 @@ void main() {
     presenter = LoginPresenterSpy();
     initStreams();
     mockStreams();
-    final loginPage = MaterialApp(home: LoginPage(presenter));
+    final loginPage = MaterialApp(home: LoginPage(presenter: presenter));
     await tester.pumpWidget(loginPage);
   }
 
