@@ -20,4 +20,8 @@ void main() {
   test('Should return null if email is empty', () {
     expect(sut.validate(''), null);
   });
+
+  test('Should return null if email is null', () {
+    expect(sut.validate(null), null);
+  });
 }
